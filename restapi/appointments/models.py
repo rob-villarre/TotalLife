@@ -18,7 +18,7 @@ class Appointment(models.Model):
             models.UniqueConstraint(fields=['patient', 'start_date'], name='unique_patient_appointment')
         ]
 
-    def clean(self, *args, **kwargs):
+    def clean(self):
         if self.end_date <= self.start_date:
             raise ValidationError("End date must be after start date.")
         

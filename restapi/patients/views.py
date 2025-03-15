@@ -27,3 +27,36 @@ def create_patient(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def patient_view(request, patient_id):
+    try:
+        patient = Patient.objects.get(id=patient_id)
+    except Patient.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = PatientSerializer(patient)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        return update_patient(request=request, patient=patient)
+    elif request.method == 'DELETE':
+        return delete_patient(request=request, patient_id=patient_id)
+    else:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+def delete_patient(request, patient_id):
+    try:
+        patient = Patient.objects.get(id=patient_id)
+    except Patient.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    patient.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+def update_patient(request, patient):
+    serializer = PatientSerializer(patient, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
