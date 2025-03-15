@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -41,16 +40,11 @@ def patient_view(request, patient_id):
     elif request.method == 'PUT':
         return update_patient(request=request, patient=patient)
     elif request.method == 'DELETE':
-        return delete_patient(request=request, patient_id=patient_id)
+        return delete_patient(request=request, patient=patient)
     else:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-def delete_patient(request, patient_id):
-    try:
-        patient = Patient.objects.get(id=patient_id)
-    except Patient.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+def delete_patient(request, patient):
     patient.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 

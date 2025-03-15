@@ -1,7 +1,5 @@
-from rest_framework.test import APITestCase, APIRequestFactory
-
+from rest_framework.test import APITestCase
 from .models import Patient
-from .views import patients_view
 from rest_framework import status
 
 class PatientsAPITests(APITestCase):
@@ -116,3 +114,46 @@ class PatientsAPITests(APITestCase):
         self.assertEqual(response.data[0]['phone_number'], patient['phone_number'])
         self.assertEqual(response.data[0]['email'], patient['email'].lower())
         self.assertEqual(response.data[0]['gender'], patient['gender'].upper())
+
+    def test_delete_patient(self):
+        patient = {
+            'first_name': 'Bob',
+            'last_name': 'Smith',
+            'dob': '1990-01-01',
+            'phone_number': '1234567890',
+            'email': 'bob.smith@example.com',
+            'gender': 'Male'
+        }
+
+        response = self.client.post(self.url, patient, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        patient_id = response.data['id']
+        response = self.client.delete(self.url + str(patient_id) + '/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        response = self.client.get(self.url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_update_patient(self):
+        patient = {
+            'first_name': 'Bob',
+            'last_name': 'Smith',
+            'dob': '1990-01-01',
+            'phone_number': '1234567890',
+            'email': 'bob.smith@example.com',
+            'gender': 'Male'
+        }
+
+        response = self.client.post(self.url, patient, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        patient_id = response.data['id']
+        patient['first_name'] = 'Bob2'
+        response = self.client.put(self.url + str(patient_id) + '/', patient, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['first_name'], patient['first_name'].upper())
+
+        patient_db = Patient.objects.get(id=patient_id)
+        self.assertEqual(patient_db.first_name, patient['first_name'].upper())
