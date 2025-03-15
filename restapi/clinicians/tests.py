@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 
 from .models import Clinician
 
-class PatientsAPITests(APITestCase):
+class CliniciansAPITests(APITestCase):
     def setUp(self):
         self.url = '/api/clinicians/'
         self.clinician = {
@@ -34,6 +34,28 @@ class PatientsAPITests(APITestCase):
         response = self.client.post(self.url, self.clinician, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['npi_number'], ['Invalid NPI number.'])
+
+    def test_create_clinician_missing_field(self):
+        clinician = {
+            'first_name': 'Bob',
+            'last_name': 'Smith',
+            'npi_number': '1234567890',
+        }
+
+        response = self.client.post(self.url, clinician, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['state'], ['This field is required.'])
+
+    @patch('clinicians.serializer.ClinicianSerializer.validate')
+    def test_create_clinician_with_same_npi_number(self, mock_validate):
+        mock_validate.return_value = self.clinician
+
+        response = self.client.post(self.url, self.clinician, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(self.url, self.clinician, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('This field must be unique.', response.data['npi_number'])
 
     @patch('clinicians.serializer.ClinicianSerializer.validate')
     def test_get_clinicians(self, mock_validate):

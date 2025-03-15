@@ -1,12 +1,6 @@
-from django.db import IntegrityError
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.core.exceptions import ValidationError
-
-from clinicians.models import Clinician
-from patients.models import Patient
 from .models import Appointment
 from .serializer import AppointmentSerializer
 
@@ -24,42 +18,42 @@ def get_appointments(request):
     serializer = AppointmentSerializer(appointments, many=True)
     return Response(serializer.data)
 
-def create_appointment(request):
-    patient_id =  request.data.get('patient')
-    clinician_id = request.data.get('clinician')
-    start_date = request.data.get('start_date')
-    end_date = request.data.get('end_date')
-    appointment_status = request.data.get('status')
-
-    if not patient_id or not clinician_id or not start_date or not end_date or not appointment_status:
-        return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
+def create_appointment(request):    
     
-    try:
-        patient = Patient.objects.get(id=patient_id)
-    except Patient.DoesNotExist:
-        return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
-    
-    try:
-        clinician = Clinician.objects.get(id=clinician_id)
-    except Clinician.DoesNotExist:
-        return Response({'error': 'Clinician not found'}, status=status.HTTP_404_NOT_FOUND)
-    
-    appointment = {
-        "patient": patient.pk,
-        "clinician": clinician.pk,
-        "start_date": start_date,
-        "end_date": end_date,
-        "status": appointment_status
-    }
-    
-    serializer = AppointmentSerializer(data=appointment)
+    serializer = AppointmentSerializer(data=request.data)
     if serializer.is_valid():
-        try:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except ValidationError as e:
-            return Response(e.messages, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def appointment_view(request, appointment_id):
+
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+    except Appointment.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        return update_appointment(request=request, appointment=appointment)
+    elif request.method == 'DELETE':
+        return delete_appointment(request=request, appointment=appointment)
     else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+def delete_appointment(request, appointment):
+    appointment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+ 
+def update_appointment(request, appointment):
+    serializer = AppointmentSerializer(appointment, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 

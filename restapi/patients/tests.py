@@ -136,6 +136,29 @@ class PatientsAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
 
+    def test_get_patient(self):
+        patient = {
+            'first_name': 'Bob',
+            'last_name': 'Smith',
+            'dob': '1990-01-01',
+            'phone_number': '1234567890',
+            'email': 'bob.smith@example.com',
+            'gender': 'Male'
+        }
+
+        response = self.client.post(self.url, patient, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        patient_id = response.data['id']
+        response = self.client.get(self.url + str(patient_id) + '/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['first_name'], patient['first_name'].upper())
+        self.assertEqual(response.data['last_name'], patient['last_name'].upper())
+        self.assertEqual(response.data['dob'], patient['dob'])
+        self.assertEqual(response.data['phone_number'], patient['phone_number'])
+        self.assertEqual(response.data['email'], patient['email'].lower())
+        self.assertEqual(response.data['gender'], patient['gender'].upper())
+        
     def test_update_patient(self):
         patient = {
             'first_name': 'Bob',
