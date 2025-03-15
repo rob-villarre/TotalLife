@@ -17,13 +17,3 @@ class Clinician(models.Model):
 
     def __str__(self):
         return self.first_name + " " + self.last_name + " " + self.npi_number
-
-
-# {
-#     "id": 3,
-#     "first_name": "JOHN",
-#     "last_name": "AALTO",
-#     "npi_number": "1518196054",
-#     "state": "VA",
-#     "created_at": "2025-03-15T01:26:56.126383Z"
-# }

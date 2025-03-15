@@ -25,21 +25,27 @@ def get_clinicians(request):
 
 def create_clinician(request):
 
-    # required_fields = [field.name for field in Clinician._meta.get_fields()]
-    # missing_fields = [field for field in required_fields if field not in request.POST]
+    npi_number =  request.data.get('npi_number')
+    first_name = request.data.get('first_name')
+    last_name = request.data.get('last_name')
+    state = request.data.get('state')
 
-    # if missing_fields:
-    #     return Response({'error': f'Missing required fields: {", ".join(missing_fields)}'}, status=status.HTTP_400_BAD_REQUEST)
+    if not npi_number or not first_name or not last_name or not state:
+        return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    if not validate_clinician(request.data['npi_number'], request.data['first_name'], request.data['last_name'], request.data['state']):
+    if not validate_clinician(
+        npi_number,
+        first_name, last_name,
+        state
+    ):
         return Response({'error': 'Clinician could not be validated with the NPI number'}, status=status.HTTP_400_BAD_REQUEST)
     
     Clinician.objects.create(
-            first_name=request.data['first_name'],
-            last_name=request.data['last_name'],
+            first_name=request.data['first_name'].upper(),
+            last_name=request.data['last_name'].upper(),
             npi_number=request.data['npi_number'],
-            state=request.data['state']
+            state=request.data['state'].upper()
         )
     serializer = ClinicianSerializer(data=request.data)
     if serializer.is_valid():
@@ -64,9 +70,9 @@ def validate_clinician(npi_number, first_name, last_name, state):
     
     clinician_data = data['results'][0]
     # TODO: check all addresses?
-    if clinician_data['basic']['first_name'] != first_name \
-        or clinician_data['basic']['last_name'] != last_name \
-        or clinician_data['addresses'][0]['state'] != state:
+    if clinician_data['basic']['first_name'] != first_name.upper() \
+        or clinician_data['basic']['last_name'] != last_name.upper() \
+        or clinician_data['addresses'][0]['state'] != state.upper():
         return False
     
     return True
