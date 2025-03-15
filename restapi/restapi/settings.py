@@ -25,13 +25,16 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","127.0.0.1").split(",")
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","127.0.0.1").split(",")
+
+ALLOWED_HOSTS = []
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Frontend URL
+]
 
 # Application definition
 
@@ -45,7 +48,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'patients',
     'clinicians',
-    'appointments'
+    'appointments',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'restapi.urls'

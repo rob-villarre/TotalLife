@@ -30,12 +30,12 @@ class ClinicianSerializer(serializers.ModelSerializer):
         if response.status_code != 200:
             raise serializers.ValidationError("Error validating NPI number.")
         
-        data = response.json()
+        response_data = response.json()
 
-        if 'results' not in data or len(data['results']) == 0:
+        if 'results' not in response_data or len(response_data['results']) == 0:
             raise serializers.ValidationError('Invalid NPI number.')
         
-        clinician_data = data['results'][0]
+        clinician_data = response_data['results'][0]
         # TODO: check all addresses?
         if clinician_data['basic']['first_name'] != first_name \
             or clinician_data['basic']['last_name'] != last_name \
@@ -54,3 +54,10 @@ class ClinicianSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clinician
         fields = '__all__'
+
+#         {
+# "npi_number": "1306891262",
+# "first_name": "MARK ",
+# "last_name": "AARON",
+# "state": "TN"
+# }

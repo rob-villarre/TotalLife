@@ -16,7 +16,7 @@ def appointments_view(request):
 def get_appointments(request):
     appointments = Appointment.objects.all()
     serializer = AppointmentSerializer(appointments, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 def create_appointment(request):    
     

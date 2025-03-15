@@ -1,7 +1,6 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from .models import Appointment
 from patients.models import Patient
 from clinicians.models import Clinician
 
@@ -66,6 +65,19 @@ class AppointmentAPITests(APITestCase):
         self.assertEqual(response.data['start_date'], self.appointment['start_date'])
         self.assertEqual(response.data['end_date'], self.appointment['end_date'])
         self.assertEqual(response.data['status'], self.appointment['status'])
+
+    def test_create_appointment_invalid_patient(self):
+        appointment = {
+            'patient': 100,
+            'clinician': self.clinician_one['id'],
+            'start_date': '2021-01-01T10:00:00Z',
+            'end_date': '2021-01-01T11:00:00Z',
+            'status': 'SCHEDULED'
+        }
+
+        response = self.client.post(self.url, appointment, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['patient'], ['Invalid pk "100" - object does not exist.'])
 
     def test_create_appointment_missing_field(self):
         appointment = {
@@ -133,7 +145,6 @@ class AppointmentAPITests(APITestCase):
 
         self.appointment['status'] = 'COMPLETED'
         response = self.client.put(self.url + str(appointment_id) + '/', self.appointment, format='json')
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['patient'], self.appointment['patient'])
         self.assertEqual(response.data['clinician'], self.appointment['clinician'])
