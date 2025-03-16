@@ -34,7 +34,6 @@ docker-compose exec restapi python manage.py migrate
 
 Load initial data (optional):
 ```bash
-# Load fixtures if available
 docker-compose exec restapi python manage.py loaddata initial_data.json
 
 # Create a superuser for admin access
@@ -43,7 +42,6 @@ docker-compose exec restapi python manage.py createsuperuser
 
 Run tests
 ```bash
-# Load fixtures if available
 docker-compose exec restapi python manage.py test
 ```
 
@@ -68,12 +66,15 @@ The frontend application will be available at: http://localhost:3000
 
 For the backend (in /restapi/.env):
 
+```bash
 SECRET_KEY='django-insecure-md=m=_ua2p==bk5*h-05c6=)hlb(dr+&+)fngtnw1zfpvf31z+'
 DEBUG=True
 DJANGO_ALLOWED_HOSTS=[]
+```
 
 For the frontend (in /web/.env.local):
-
+```bash
 NEXT_PUBLIC_RESTAPI_APPOINTMENT_URL=http://localhost:8000/api/appointments/
 NEXT_PUBLIC_RESTAPI_PATIENT_URL=http://localhost:8000/api/patients/
 NEXT_PUBLIC_RESTAPI_CLINICIAN_URL=http://localhost:8000/api/clinicians/
+```
