@@ -46,11 +46,7 @@ export default function Home() {
         const appointmentEndDate = new Date(appointment.end_date);
 
         const filterStartDate = startDate ? new Date(`${startDate}T00:00:00`) : null;
-        // filterStartDate?.setHours(0, 0, 0, 0);
         const filterEndDate = endDate ? new Date(`${endDate}T23:59:59`) : null;
-        console.log(filterEndDate)
-        // filterEndDate?.setHours(23, 59, 59, 999);
-        console.log(filterEndDate)
 
         if (filterStartDate && appointmentStartDate < filterStartDate) {
             return false;
