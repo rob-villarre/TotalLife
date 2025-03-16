@@ -6,6 +6,7 @@ interface DataState {
     loading: boolean;
     error: string | null;
     fetchPatients: (endpoint: string) => Promise<void>;
+    getPatientById: (id: number) => Patient | undefined;
 }
 
 const usePatientStore = create<DataState>((set: (args: { loading: boolean; error?: string | null; data?: Patient[]; }) => void) => ({
@@ -27,11 +28,14 @@ const usePatientStore = create<DataState>((set: (args: { loading: boolean; error
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
-            console.log(data)
             set({ data, loading: false });
         } catch (error) {
             set({ error: (error as Error).message, loading: false });
         }
+    },
+    getPatientById: (id: number): Patient | undefined => {
+        const state = usePatientStore.getState();
+        return state.data?.find((clinician: Patient) => clinician.id === id);
     },
 }));
 

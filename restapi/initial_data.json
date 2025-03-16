@@ -1,0 +1,75 @@
+[
+    {
+      "model": "patients.patient",
+      "pk": 1,
+      "fields": {
+        "first_name": "JOHN",
+        "last_name": "MILL",
+        "dob": "1985-06-15",
+        "phone_number": "123-456-7890",
+        "email": "john.mill@example.com",
+        "gender": "Male",
+        "created_at": "2025-03-15T08:00:00Z"
+      }
+    },
+    {
+      "model": "patients.patient",
+      "pk": 2,
+      "fields": {
+        "first_name": "JANE",
+        "last_name": "COOK",
+        "dob": "1990-07-20",
+        "phone_number": "987-654-3210",
+        "email": "jane.cook@example.com",
+        "gender": "Female",
+        "created_at": "2025-03-15T08:05:00Z"
+      }
+    },
+    {
+      "model": "clinicians.clinician",
+      "pk": 1,
+      "fields": {
+        "first_name": "ROBERT",
+        "last_name": "AAGARD",
+        "npi_number": "1477661379",
+        "state": "UT",
+        "created_at": "2025-03-15T08:00:00Z"
+      }
+    },
+    {
+      "model": "clinicians.clinician",
+      "pk": 2,
+      "fields": {
+        "first_name": "CARISSA",
+        "last_name": " ABBOTT",
+        "npi_number": "1063265049",
+        "state": "WA",
+        "created_at": "2025-03-15T08:05:00Z"
+      }
+    },
+    {
+      "model": "appointments.appointment",
+      "pk": 1,
+      "fields": {
+        "patient": 1,
+        "clinician": 1,
+        "start_date": "2025-03-16T09:00:00Z",
+        "end_date": "2025-03-16T09:30:00Z",
+        "status": "SCHEDULED",
+        "created_at": "2025-03-15T08:10:00Z"
+      }
+    },
+    {
+      "model": "appointments.appointment",
+      "pk": 2,
+      "fields": {
+        "patient": 2,
+        "clinician": 2,
+        "start_date": "2025-03-16T10:00:00Z",
+        "end_date": "2025-03-16T10:30:00Z",
+        "status": "SCHEDULED",
+        "created_at": "2025-03-15T08:15:00Z"
+      }
+    }
+  ]
+  
