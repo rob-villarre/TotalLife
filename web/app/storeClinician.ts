@@ -1,18 +1,18 @@
 import { create } from 'zustand'
-import { Appointment } from '@/models/application';
+import { Clinician } from '@/models/clinician';
 
 interface DataState {
-    data: Appointment[] | null;
+    data: Clinician[] | null;
     loading: boolean;
     error: string | null;
-    fetchAppointments: (endpoint: string) => Promise<void>;
+    fetchClinicians: (endpoint: string) => Promise<void>;
 }
 
-const useAppointmentStore = create<DataState>((set: (args: { loading: boolean; error?: string | null; data?: Appointment[]; }) => void) => ({
+const useClinicianStore = create<DataState>((set: (args: { loading: boolean; error?: string | null; data?: Clinician[]; }) => void) => ({
     data: null,
     loading: false,
     error: null,
-    fetchAppointments: async (endpoint) => {
+    fetchClinicians: async (endpoint) => {
         set({ error: null, loading: true });
 
         const apiURL = endpoint;
@@ -35,4 +35,4 @@ const useAppointmentStore = create<DataState>((set: (args: { loading: boolean; e
     },
 }));
 
-export default useAppointmentStore;
+export default useClinicianStore;

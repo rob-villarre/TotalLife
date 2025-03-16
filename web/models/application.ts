@@ -1,8 +1,9 @@
 export interface Appointment {
     id: number;
-    patientId: number;
-    clinicianId: number
-    startTime: string;
-    endTime: string;
+    patient_id: number;
+    clinician_id: number
+    start_time: string;
+    end_time: string;
     status: string;
+    created_at: string;
 }
